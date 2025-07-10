@@ -19,3 +19,9 @@ async def verify(request: Request):
     print("❌ Webhook failed:", params)
     return {"error": "Invalid verification attempt"}
 
+@app.post("/webhook")
+async def receive_event(request: Request):
+    data = await request.json()
+    print("📩 Event masuk:", data)
+    return {"status": "ok"}
+
