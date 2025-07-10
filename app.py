@@ -3,7 +3,7 @@ import os
 
 app = FastAPI()
 
-VERIFY_TOKEN = os.getenv("META_VERIFY_TOKEN", "ganti_token_ini")
+VERIFY_TOKEN = os.getenv("META_VERIFY_TOKEN", "hehehe")
 
 @app.get("/webhook")
 async def verify(request: Request):
