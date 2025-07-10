@@ -1,15 +1,14 @@
 from fastapi import FastAPI, Request
+from fastapi.responses import Response  # ⬅️ Tambahkan ini
 
 app = FastAPI()
 
-VERIFY_TOKEN = "hehehe"  # Hardcoded token untuk testing
+VERIFY_TOKEN = "hehehe"
 
-# Route root untuk cek server aktif
 @app.get("/")
 def root():
     return {"message": "Server is alive!"}
 
-# Route webhook GET (verifikasi dari Facebook)
 @app.get("/webhook")
 async def verify(request: Request):
     params = dict(request.query_params)
@@ -21,16 +20,13 @@ async def verify(request: Request):
 
     if mode == "subscribe" and token == VERIFY_TOKEN and challenge:
         print("✅ Webhook verified.")
-        return int(challenge)
+        return Response(content=challenge, media_type="text/plain")  # ⬅️ FIX
 
     print("❌ Webhook verification failed.")
     return {"error": "Invalid token or missing challenge"}
 
-# (Optional) Route POST webhook untuk nerima event dari Meta
 @app.post("/webhook")
 async def receive_event(request: Request):
     data = await request.json()
     print("📩 Event masuk:", data)
     return {"status": "ok"}
-
-
