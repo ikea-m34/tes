@@ -1,11 +1,14 @@
 from fastapi import FastAPI, Request
-import os
 
 app = FastAPI()
 
-VERIFY_TOKEN = os.getenv("META_VERIFY_TOKEN", "hehehe")
+VERIFY_TOKEN = "hehehe"  # hardcoded sementara
 
-@app.get("/webhook")
+@app.get("/")  # ← ini buat root check
+def root():
+    return {"message": "Server is alive!"}
+
+@app.get("/webhook")  # ← ini buat webhook GET
 async def verify(request: Request):
     params = dict(request.query_params)
     mode = params.get("hub.mode")
@@ -18,10 +21,4 @@ async def verify(request: Request):
 
     print("❌ Webhook failed:", params)
     return {"error": "Invalid verification attempt"}
-
-@app.post("/webhook")
-async def receive_event(request: Request):
-    data = await request.json()
-    print("📩 Event masuk:", data)
-    return {"status": "ok"}
 
