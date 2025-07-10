@@ -3,17 +3,17 @@ import os
 
 app = FastAPI()
 
-VERIFY_TOKEN = os.getenv("META_VERIFY_TOKEN", "hehehe")
+VERIFY_TOKEN = os.getenv("META_VERIFY_TOKEN", "hehehe")  # fallback default
 
 @app.get("/webhook")
 async def verify(request: Request):
     params = dict(request.query_params)
-    if params.get("hub.mode") == "subscribe" and params.get("hub.verify_token") == VERIFY_TOKEN:
-        return int(params.get("hub.challenge"))
-    return {"error": "Verifikasi gagal"}
+    token = params.get("hub.verify_token")
+    mode = params.get("hub.mode")
+    challenge = params.get("hub.challenge")
 
-@app.post("/webhook")
-async def receive_event(request: Request):
-    data = await request.json()
-    print("📩 Event masuk:", data)
-    return {"status": "ok"}
+    if mode == "subscribe" and token == VERIFY_TOKEN and challenge:
+        return int(challenge)
+
+    return {"error": "Token mismatch or missing challenge"}
+
